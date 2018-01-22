@@ -15,8 +15,8 @@ def gl():
 	return render_template('gl.html', 
         MAPBOX_ACCESS_TOKEN=MAPBOX_ACCESS_TOKEN)
 
-# if __name__ == "__main__":
-#     app.run()
+if __name__ == "__main__":
+    app.run()
 
 # @app.errorhandler(500)
 # def server_error(e):
