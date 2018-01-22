@@ -1,3 +1,3 @@
 # flask-mapbox-app
 
-Beta
+Configured for deployment on the Google App Engine.
