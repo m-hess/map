@@ -19,7 +19,7 @@ var map = new mapboxgl.Map({
 // PULL DATA
 
 // 1.) Pull JSON data from local file and create a usable array with it
-$.loadJSON('generated.json', function(json) {
+$.getJSON('generated.json', function(json) {
 
   // 2.) Transform incoming JSON data to GeoJSON,
   // create empty set called geojson to store transformed json data
