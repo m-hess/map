@@ -16,6 +16,48 @@ var map = new mapboxgl.Map({
   zoom: 3
 });
 
+
+
+// PULL DATA
+
+// Note: this function can be replaced with the pipeline of live data later
+// Source: https://stackoverflow.com/questions/45536403/mapbox-gl-js-and-geojson-as-an-external-file
+// WARNING: There is an error with the JSON data returned by my google script,
+// the longitude and latitude data are inverted and "latitude" is spelled "latitde".
+// I manually fixed these errors but they will need to be addressed when data pipeline is implemented.
+
+// 1.) Pull JSON data from local file and create a usable array with it
+$.getJSON('generated.json', function(json) {
+
+  // 2.) Transform incoming JSON data to GeoJSON,
+  // create empty set called geojson to store transformed json data
+  var geojson = {
+    type: "FeatureCollection",
+    features: [],
+  };
+
+  // 3.) Iterate through json array and add each item to geojson after formating
+  // WARNING: No break statement implemented yet, if error occurs --> infinite loop
+  for (i = 0; i < json.length; i++) {
+    geojson.features.push({
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [json[i].longitude, json[i].latitude]
+      },
+      "properties": {
+        "address": json[i].address,
+      },
+    });
+  }
+
+  console.log(geojson);
+
+  // 4.) Verify that json and geojson input is correct
+  //console.log(JSON.stringify(json, null, 2))
+  //console.log(JSON.stringify(geojson, null, 2))
+
+
 // ADD GEOCODER (ADDRESS SEARCH BAR)
 // Sources: https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder/
 // https://www.mapbox.com/mapbox-gl-js/example/point-from-geocoder-result/
@@ -79,46 +121,6 @@ map.on('load', function() {
     map.getSource('single-point').setData(ev.result.geometry);
   });
 });
-
-
-// PULL DATA
-
-// Note: this function can be replaced with the pipeline of live data later
-// Source: https://stackoverflow.com/questions/45536403/mapbox-gl-js-and-geojson-as-an-external-file
-// WARNING: There is an error with the JSON data returned by my google script,
-// the longitude and latitude data are inverted and "latitude" is spelled "latitde".
-// I manually fixed these errors but they will need to be addressed when data pipeline is implemented.
-
-// 1.) Pull JSON data from local file and create a usable array with it
-$.getJSON('generated.json', function(json) {
-
-  // 2.) Transform incoming JSON data to GeoJSON,
-  // create empty set called geojson to store transformed json data
-  var geojson = {
-    type: "FeatureCollection",
-    features: [],
-  };
-
-  // 3.) Iterate through json array and add each item to geojson after formating
-  // WARNING: No break statement implemented yet, if error occurs --> infinite loop
-  for (i = 0; i < json.length; i++) {
-    geojson.features.push({
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [json[i].longitude, json[i].latitude]
-      },
-      "properties": {
-        "address": json[i].address,
-      },
-    });
-  }
-
-  console.log(geojson);
-
-  // 4.) Verify that json and geojson input is correct
-  //console.log(JSON.stringify(json, null, 2))
-  //console.log(JSON.stringify(geojson, null, 2))
 
 
   // ADD DATA/LAYERS TO MAP
