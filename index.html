@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <title></title>
+  <!-- Stylesheet -->
+  <link rel='stylesheet' href='style.css'>
+  <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' />
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.0/mapbox-gl.css' rel='stylesheet' />
+  <!-- Mapbox -->
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.0/mapbox-gl.js'></script>
+  <!-- Add jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+  <!-- Add Geocoder library and stylesheet-->
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.min.js'></script>
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.css' type='text/css' />
+  <!-- Add Google Scripts -->
+  <!-- <script src="https://maps.google.com/maps/api/js?sensor=false"></script> -->
+  <!-- Polygon tools -->
+  <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css' />
+</head>
+
+
+<body>
+  <div id='parent-container'>
+
+    <div id='left'>
+      <div id="left-title" style="text-align:center;">
+        <strong></br>Crazy Data Map</strong>
+        <strong style="color: slateblue;"></br>Wahoo!</strong>
+      </div>
+      <div id="text">
+        <p>
+          </br><strong>Explore my map of fake data!</strong>
+          </br>The map is generated using Mapbox GL, and the data was generated randomly through <a href="https://www.json-generator.com/">json-generator.com/</a>.
+          </br>Here are some built-in tools to check out and how to use them:
+          </br>
+          <ul>
+            <li><strong>Scrolling:</strong></br>Use your trackpad or mouse to change the zoom level of the map by scrolling</li>
+            <li><strong>Clustering:</strong></br>Try changing the zoom level to see how points automatically cluster to simplify the view.</li>
+            <li><strong>Fly-To Zoom:</strong></br>Try clicking on one of the clusters to zoom in on a point.</li>
+            <li><strong>Search Bar:</strong></br>Try plugging an address into the search bar on the top right. The map will change the view and zoom in on the address.</li>
+            <li><strong>Popups:</strong></br>Try zooming in on a point until it becomes a small blue dot. When it does, click on it! You will see a random address displayed in a popup window.</li>
+            <li><strong>Polygonal Selection Tool:</strong></br>Use the button in the top right corner of the screen to get the area of a selected region.</li>
+          </ul>
+        </p>
+      </div>
+      <div id="left-container">
+        <div id="summary"></div>
+      </div>
+    </div>
+
+    <div id='right'>
+      <div id="map">
+        <script src="display.js"></script>
+      </div>
+      <div class='calculation-box'>
+        <p>Try out the polygon selection tool (top right)!</p>
+        <div id='calculated-area'></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
