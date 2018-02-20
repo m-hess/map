@@ -1,9 +1,7 @@
 /*
-PROJECT: Uber Physical Security Map
-VERSION: Draft
-DATA SOURCE: Fake Incident Reporting Data from Google Sheets
-DATE: 2.8.2018
-AUTHORS: Sheena Yu, Drew Leonard, Madeline Hess
+PROJECT: Fake Data Map
+DATE: 2.19.2018
+AUTHORS: Madeline Hess
 */
 
 
@@ -19,12 +17,6 @@ var map = new mapboxgl.Map({
 
 
 // PULL DATA
-
-// Note: this function can be replaced with the pipeline of live data later
-// Source: https://stackoverflow.com/questions/45536403/mapbox-gl-js-and-geojson-as-an-external-file
-// WARNING: There is an error with the JSON data returned by my google script,
-// the longitude and latitude data are inverted and "latitude" is spelled "latitde".
-// I manually fixed these errors but they will need to be addressed when data pipeline is implemented.
 
 // 1.) Pull JSON data from local file and create a usable array with it
 $.getJSON('generated.json', function(json) {
@@ -51,76 +43,72 @@ $.getJSON('generated.json', function(json) {
     });
   }
 
+
   console.log(geojson);
 
-  // 4.) Verify that json and geojson input is correct
-  //console.log(JSON.stringify(json, null, 2))
-  //console.log(JSON.stringify(geojson, null, 2))
+  // ADD GEOCODER (ADDRESS SEARCH BAR)
+  // Sources: https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder/
+  // https://www.mapbox.com/mapbox-gl-js/example/point-from-geocoder-result/
+  var geocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken
+  });
 
+  map.addControl(geocoder);
 
-// ADD GEOCODER (ADDRESS SEARCH BAR)
-// Sources: https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder/
-// https://www.mapbox.com/mapbox-gl-js/example/point-from-geocoder-result/
-var geocoder = new MapboxGeocoder({
-  accessToken: mapboxgl.accessToken
-});
+  // Give proximity bias to Mapbox Geocoding API search results
+  // Source: https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder-proximity-bias/
+  map.on('load', updateGeocoderProximity); // set proximity on map load
+  map.on('moveend', updateGeocoderProximity); // and then update proximity each time the map moves
 
-map.addControl(geocoder);
-
-// Give proximity bias to Mapbox Geocoding API search results
-// Source: https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder-proximity-bias/
-map.on('load', updateGeocoderProximity); // set proximity on map load
-map.on('moveend', updateGeocoderProximity); // and then update proximity each time the map moves
-
-function updateGeocoderProximity() {
-  if (map.getZoom() >= 11) {
-    var center = map.getCenter().wrap(); // ensures the longitude falls within -180 to 180 as the Geocoding API doesn't accept values outside this range
-    geocoder.setProximity({
-      longitude: center.lng,
-      latitude: center.lat
-    });
-    //console.log(center);
-  } else if (map.getZoom() > 9) {
-    var center = map.getCenter().wrap(); // ensures the longitude falls within -180 to 180 as the Geocoding API doesn't accept values outside this range
-    geocoder.setProximity({
-      longitude: center.lng,
-      latitude: center.lat
-    });
-    //console.log(center);
-  } else {
-    geocoder.setProximity(null);
+  function updateGeocoderProximity() {
+    if (map.getZoom() >= 11) {
+      var center = map.getCenter().wrap(); // ensures the longitude falls within -180 to 180 as the Geocoding API doesn't accept values outside this range
+      geocoder.setProximity({
+        longitude: center.lng,
+        latitude: center.lat
+      });
+      //console.log(center);
+    } else if (map.getZoom() > 9) {
+      var center = map.getCenter().wrap(); // ensures the longitude falls within -180 to 180 as the Geocoding API doesn't accept values outside this range
+      geocoder.setProximity({
+        longitude: center.lng,
+        latitude: center.lat
+      });
+      //console.log(center);
+    } else {
+      geocoder.setProximity(null);
+    }
   }
-}
 
 
 
-// After the map style has loaded on the page, add a source layer and default
-// styling for a single point.
-map.on('load', function() {
-  map.addSource('single-point', {
-    "type": "geojson",
-    "data": {
-      "type": "FeatureCollection",
-      "features": []
-    }
+  // After the map style has loaded on the page, add a source layer and default
+  // styling for a single point.
+  map.on('load', function() {
+    map.addSource('single-point', {
+      "type": "geojson",
+      "data": {
+        "type": "FeatureCollection",
+        "features": []
+      }
+    });
+
+    map.addLayer({
+      "id": "point",
+      "source": "single-point",
+      "type": "circle",
+      "paint": {
+        "circle-radius": 8,
+        "circle-color": "#0000ad"
+      }
+    });
+
+    // Listen for the `geocoder.input` event that is triggered when a user
+    // makes a selection and add a symbol that matches the result.
+    geocoder.on('result', function(ev) {
+      map.getSource('single-point').setData(ev.result.geometry);
+    });
   });
-
-  map.addLayer({
-    "id": "point",
-    "source": "single-point",
-    "type": "circle",
-    "paint": {
-      "circle-radius": 8,
-      "circle-color": "#0000ad"
-    }
-  });
-
-  // Listen for the `geocoder.input` event that is triggered when a user
-  // makes a selection and add a symbol that matches the result.
-  geocoder.on('result', function(ev) {
-    map.getSource('single-point').setData(ev.result.geometry);
-  });
-});
 
 
   // ADD DATA/LAYERS TO MAP
